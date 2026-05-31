@@ -34,9 +34,9 @@ The Vector Similarity Engine serves a backend that needs to display recommendati
 
 | Failure | Expected behavior |
 |---------|-------------------|
-| Vectors have different dimensions | Fail fast — return a typed error before any computation |
+| Vectors have different dimensions | Fail fast return a typed error before any computation |
 | Either vector is empty | Return a typed error |
-| Input vectors are not normalized | Fail fast — return a typed error before any computation |
+| Input vectors are not normalized | Fail fast return a typed error before any computation |
 ---
 
 ## Design Questions

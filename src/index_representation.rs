@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use crate::similarity::dot_product;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum EntyType {
@@ -32,6 +33,22 @@ impl IndexRepresentation {
         }
 
     }
+
+    pub fn compute_similarity(vec_user:&[f32] , vec_item:&[f32] ) -> Result<f32, String> {
+        let is_user_empty = vec_user.is_empty();
+        let is_item_empty = vec_item.is_empty();
+        let mut message = String::new();
+        if is_user_empty {
+            message +=  "User's embedding is empty";
+        }
+        if is_item_empty {
+            message +=  "Item's embedding is empty";
+        }
+        if is_user_empty || is_item_empty {
+            return Err(message);
+        }
+        Ok(dot_product(vec_user,vec_item))
+    } 
 }
 
 #[cfg(test)]
