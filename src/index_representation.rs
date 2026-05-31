@@ -54,13 +54,18 @@ impl IndexRepresentation {
 
     }
 
+    pub fn get_item_embeddings(&self) -> &HashMap<String, [f32; 128]> {
+        &self.item_mapping 
+    }
+
+
 }
 
 
 
 #[cfg(test)]
 
-fn create_index() -> IndexRepresentation{
+pub fn create_index() -> IndexRepresentation{
     let user_hashmap = HashMap::from([
         ("1".to_string(), [0.0_f32; 128]),
         ("2".to_string(), [1.0_f32; 128]),
@@ -71,7 +76,7 @@ fn create_index() -> IndexRepresentation{
         ("101".to_string(), [100.0_f32; 128]),
         ("102".to_string(), [101.0_f32; 128]),
         ("103".to_string(), [102.0_f32; 128]),
-        ("104".to_string(), [102.0_f32; 128]),
+        ("104".to_string(), [103.0_f32; 128]),
     ]);
     let index = IndexRepresentation::new(user_hashmap, item_hashmap);
     return index

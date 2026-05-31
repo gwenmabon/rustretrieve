@@ -1,4 +1,4 @@
-# US-001 — Embedding Index
+# US-001 — Similarity Computatio
 
 **Epic:** Phase 1 / Stage 1.1 — Vector Similarity Engine
 **Status:** [ ] Not started
