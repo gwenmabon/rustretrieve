@@ -7,6 +7,26 @@ pub enum EntyType {
     Item = 1,
 }
 
+pub fn compute_similarity(vec_user:&[f32] , vec_item:&[f32] ) -> Result<f32, String> {
+    let is_user_empty = vec_user.is_empty();
+    let is_item_empty = vec_item.is_empty();
+    let mut message = String::new();
+    if is_user_empty {
+        message +=  "User's embedding is empty";
+    }
+    if is_item_empty {
+        message +=  "Item's embedding is empty";
+    }
+    if is_user_empty || is_item_empty {
+        return Err(message);
+    }
+
+    if vec_user.len()!=vec_item.len(){
+        return Err("Embeddings dont have the same size.".to_string());
+    }
+    Ok(dot_product(vec_user,vec_item))
+} 
+
 pub struct IndexRepresentation {
     pub user_mapping: HashMap<String, [f32; 128]>,
     pub item_mapping: HashMap<String, [f32; 128]>,
@@ -34,22 +54,9 @@ impl IndexRepresentation {
 
     }
 
-    pub fn compute_similarity(vec_user:&[f32] , vec_item:&[f32] ) -> Result<f32, String> {
-        let is_user_empty = vec_user.is_empty();
-        let is_item_empty = vec_item.is_empty();
-        let mut message = String::new();
-        if is_user_empty {
-            message +=  "User's embedding is empty";
-        }
-        if is_item_empty {
-            message +=  "Item's embedding is empty";
-        }
-        if is_user_empty || is_item_empty {
-            return Err(message);
-        }
-        Ok(dot_product(vec_user,vec_item))
-    } 
 }
+
+
 
 #[cfg(test)]
 
@@ -89,3 +96,21 @@ fn test_insert_new_embeddings(){
     let inserted = index.get_user_embeddings("8".to_string(),);
     assert_eq!(inserted.is_ok(), true)
 }
+
+#[test]
+fn test_empty_vector(){
+    let empty_vec: Vec<f32> = vec![];
+    let vec_b = [0.0, 1.0];
+    let sim = compute_similarity(&empty_vec, &vec_b);
+    assert_eq!(sim.is_ok(), false)
+}
+
+
+#[test]
+fn test_dimension_mismatch(){
+    let vec_a = [0.0, 1.0, 0.0];
+    let vec_b = [0.0, 1.0];
+    let sim = compute_similarity(&vec_a, &vec_b);
+    assert_eq!(sim.is_ok(), false)
+}
+//Dimension mismatch → typed error
