@@ -1,26 +1,12 @@
-# 🦀 RustRetrieve — Roadmap
+# 🦀 RustRetrieve - Roadmap
 
-**Staff MLE interview prep + Rust fluency + portfolio piece.**
+**Learn Rust by building a real ML retrieval system from scratch.**
 
-You're a Staff MLE at Adikteev with deep Python expertise and production RTB experience.
-This project has three goals:
+This project is a hands-on learning path that combines:
 
-1. **Sharpen DS&A** for coding rounds — through a real system, not abstract grinding
-2. **Build Rust fluency** as a systems language alongside Python
-3. **Create a portfolio piece** that shows ML systems depth at FAANG interview bar
-
----
-
-## 🧭 Why This Project
-
-You already know how recommendation and ad-serving systems work in production.
-The gap for top-tier interviews isn't knowledge — it's:
-
-- **Coding rounds:** Articulating solutions fast, in clean code, under time pressure. You need the patterns drilled, not explained.
-- **System design rounds:** You have the intuition. You need to practice structuring it in the format interviewers expect (requirements → high-level → deep dive → trade-offs).
-- **Rust:** Many top ML infra teams (Meta, Google, Cloudflare, Databricks) value systems language experience. Rust on your profile signals depth.
-
-The project forces all three simultaneously: every feature is a Rust exercise, a DS&A pattern, and a system design building block.
+1. **Rust fluency** - learn the language through a real system, not toy examples
+2. **Data structures & algorithms** - implement them in context, not in isolation
+3. **ML systems engineering** - understand how retrieval, ranking, and serving work end-to-end
 
 ---
 
@@ -34,57 +20,41 @@ Engine                 Architectures          Systems
 heaps, hashmaps        ANN, two-tower         bandits, delayed      end-to-end
 similarity, ranking    embeddings, serving    feedback, drift       ML system
                                                                     
-DS&A drill             ML systems depth       your RTB edge         system design prep
+Rust foundations       ML systems depth       real-time systems     platform design
 (2-3 months)           (2-3 months)           (2-3 months)          (3+ months)
 ```
 
 **Philosophy:**
-- Never learn a data structure "for the interview". Always: *"what real system problem does this solve?"*
+- Never learn a data structure in the abstract. Always: *"what real system problem does this solve?"*
 - Code it yourself. Use AI as a reviewer/teacher, not a code generator.
-- After each feature: solve 2-3 related LeetCode problems. They'll feel easy because you already built the structure.
 
 ---
 
-## 🎯 Interview Pattern Map
+## 🧩 What You'll Build & Learn
 
-Reference this as you build. Every feature trains a specific interview skill.
-
-### Coding Rounds (DS&A)
-
-| You build... | Data structure | Interview pattern | Practice problems |
-|---|---|---|---|
-| Cosine similarity | `Vec<f32>`, dot product | Array math | Dot Product of Sparse Vectors (LC 1570) |
-| Top-k retrieval | `BinaryHeap` | **Heap / Priority Queue** | Kth Largest (LC 215), Top K Frequent (LC 347) |
-| Embedding index | `HashMap<u64, Vec<f32>>` | **Hash map** | Two Sum (LC 1), LRU Cache (LC 146) |
-| Feature store | `enum` + nested maps | **Design + Hash map** | Time-Based KV Store (LC 981) |
-| Ranking pipeline | Custom sort, comparators | **Sorting / Merge** | Merge K Sorted Lists (LC 23) |
-| Sliding time window | `VecDeque` | **Sliding window** | Sliding Window Max (LC 239) |
-| Event queue | Channels, `VecDeque` | **Queue / BFS** | Task Scheduler (LC 621) |
-| HNSW graph | Adjacency list, layers | **Graph traversal** | Network Delay Time (LC 743) |
-| HNSW search | Greedy beam search | **Greedy / Search** | Word Ladder (LC 127) |
-| Online updates | `Arc<RwLock<T>>` | **Concurrency** | Producer-consumer patterns |
-| Candidate generation | Set intersection | **Set operations** | Intersection of Two Arrays (LC 349) |
-
-### System Design Rounds
-
-| You build... | Maps to interview question |
-|---|---|
-| Retrieval → Reranking pipeline | "Design a recommendation system" |
-| Feature store | "Design a real-time feature serving system" |
-| ANN index | "Design a similarity search service" |
-| Streaming updates | "Design a real-time analytics pipeline" |
-| Bandit-based ranking | "Design an ad serving system with exploration" |
-| Full platform | "Design an end-to-end ML platform" (the Staff-level question) |
+| You build... | Data structure | Pattern |
+|---|---|---|
+| Cosine similarity | `Vec<f32>`, dot product | Array math |
+| Top-k retrieval | `BinaryHeap` | Heap / Priority Queue |
+| Embedding index | `HashMap<u64, Vec<f32>>` | Hash map |
+| Feature store | `enum` + nested maps | Design + Hash map |
+| Ranking pipeline | Custom sort, comparators | Sorting / Merge |
+| Sliding time window | `VecDeque` | Sliding window |
+| Event queue | Channels, `VecDeque` | Queue / BFS |
+| HNSW graph | Adjacency list, layers | Graph traversal |
+| HNSW search | Greedy beam search | Greedy / Search |
+| Online updates | `Arc<RwLock<T>>` | Concurrency |
+| Candidate generation | Set intersection | Set operations |
 
 ---
 
-# Phase 1 — Core Retrieval Engine
+# Phase 1 - Core Retrieval Engine
 
 **Duration:** 2–3 months · **Focus:** DS&A foundations in Rust
 
 ---
 
-### Stage 1.1 — Vector Similarity Engine (2–3 weeks)
+### Stage 1.1 - Vector Similarity Engine (2–3 weeks)
 
 **Build:**
 - [ ] User and item embeddings in memory (`Vec<f32>`)
@@ -94,19 +64,19 @@ Reference this as you build. Every feature trains a specific interview skill.
 - [ ] CLI interface (load, query, display)
 
 **Rust to learn:**
-- Ownership, borrowing, lifetimes — face them now
+- Ownership, borrowing, lifetimes - face them now
 - `Vec`, `HashMap`, `BinaryHeap`
 - Modules: `mod`, `pub`, file structure
 - `#[derive(Debug, Clone)]`
 
 **Design questions:**
-- `BinaryHeap` + `Reverse` vs `.sort().truncate(k)` — complexity trade-off?
+- `BinaryHeap` + `Reverse` vs `.sort().truncate(k)` - complexity trade-off?
 - Pre-normalized vectors: what does it save, what does it cost?
 - Code structure: `embedding` / `index` / `cli` modules?
 
 **References:**
-- 📖 [Rust Book — Ch. 4: Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html) — Read and re-read
-- 📖 [Rust Book — Ch. 8: Collections](https://doc.rust-lang.org/book/ch08-00-common-collections.html)
+- 📖 [Rust Book - Ch. 4: Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html) - Read and re-read
+- 📖 [Rust Book - Ch. 8: Collections](https://doc.rust-lang.org/book/ch08-00-common-collections.html)
 - 📚 [std::collections::BinaryHeap](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html)
 - 📚 [std::cmp::Reverse](https://doc.rust-lang.org/std/cmp/struct.Reverse.html)
 - 🛠️ [clap crate](https://docs.rs/clap/latest/clap/)
@@ -121,7 +91,7 @@ Top 10 similar items for user 42:
 
 ---
 
-### Stage 1.2 — In-Memory Feature Store (1–2 weeks)
+### Stage 1.2 - In-Memory Feature Store (1–2 weeks)
 
 **Build:**
 - [ ] Typed features per entity (user/item): numeric, categorical, timestamp
@@ -136,19 +106,19 @@ Top 10 similar items for user 42:
 - Implement `Display` trait
 
 **Design questions:**
-- `FeatureValue` as `enum` vs `Box<dyn Feature>` — trade-offs?
+- `FeatureValue` as `enum` vs `Box<dyn Feature>` - trade-offs?
 - Missing features: `Option<T>` everywhere, or default values?
 
 **References:**
-- 📖 [Rust Book — Ch. 6: Enums](https://doc.rust-lang.org/book/ch06-00-enums.html)
-- 📖 [Rust Book — Ch. 9: Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
-- 📖 [Rust Book — Ch. 10: Generics, Traits, Lifetimes](https://doc.rust-lang.org/book/ch10-00-generics.html)
+- 📖 [Rust Book - Ch. 6: Enums](https://doc.rust-lang.org/book/ch06-00-enums.html)
+- 📖 [Rust Book - Ch. 9: Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
+- 📖 [Rust Book - Ch. 10: Generics, Traits, Lifetimes](https://doc.rust-lang.org/book/ch10-00-generics.html)
 - 📚 [std::collections::VecDeque](https://doc.rust-lang.org/std/collections/struct.VecDeque.html)
-- 📝 [Real-time ML — Chip Huyen](https://huyenchip.com/2023/09/17/real-time-ml.html)
+- 📝 [Real-time ML - Chip Huyen](https://huyenchip.com/2023/09/17/real-time-ml.html)
 
 ---
 
-### Stage 1.3 — Ranking Pipeline (2–4 weeks)
+### Stage 1.3 - Ranking Pipeline (2–4 weeks)
 
 **Build:**
 - [ ] Two-stage: retrieval (N candidates) → reranking (top K)
@@ -165,15 +135,15 @@ Top 10 similar items for user 42:
 
 **Design questions:**
 - Why two-stage? (do the latency math: N_catalog × scoring_cost)
-- N_retrieval / N_final ratio — quality vs speed?
-- Trait vs closure for `Scorer` — when which?
+- N_retrieval / N_final ratio - quality vs speed?
+- Trait vs closure for `Scorer` - when which?
 
 **References:**
-- 📖 [Rust Book — Ch. 10: Traits](https://doc.rust-lang.org/book/ch10-02-traits.html)
-- 📖 [Rust Book — Ch. 13: Iterators & Closures](https://doc.rust-lang.org/book/ch13-00-functional-features.html)
+- 📖 [Rust Book - Ch. 10: Traits](https://doc.rust-lang.org/book/ch10-02-traits.html)
+- 📖 [Rust Book - Ch. 13: Iterators & Closures](https://doc.rust-lang.org/book/ch13-00-functional-features.html)
 - 📚 [serde.rs](https://serde.rs/)
-- 📝 [Google ML Recommendation Course](https://developers.google.com/machine-learning/recommendation/overview) — Free, excellent
-- 📝 [System Design for Discovery — Eugene Yan](https://eugeneyan.com/writing/system-design-for-discovery/)
+- 📝 [Google ML Recommendation Course](https://developers.google.com/machine-learning/recommendation/overview) - Free, excellent
+- 📝 [System Design for Discovery - Eugene Yan](https://eugeneyan.com/writing/system-design-for-discovery/)
 
 **Milestone ✅:**
 ```
@@ -184,13 +154,13 @@ Latency: retrieval=2.3ms, reranking=0.4ms, total=2.7ms
 
 ---
 
-# Phase 2 — Modern Reco Architectures
+# Phase 2 - Modern Reco Architectures
 
-**Duration:** 2–3 months · **Focus:** ANN, embeddings, vector search — the deepest learning phase
+**Duration:** 2–3 months · **Focus:** ANN, embeddings, vector search - the deepest learning phase
 
 ---
 
-### Stage 2.1 — ANN: Approximate Nearest Neighbors (3–6 weeks)
+### Stage 2.1 - ANN: Approximate Nearest Neighbors (3–6 weeks)
 
 > **The most formative stage.** Non-trivial algorithm, complex data structures,
 > concrete precision/speed trade-offs you can measure.
@@ -210,19 +180,19 @@ Latency: retrieval=2.3ms, reranking=0.4ms, total=2.7ms
 - `rand` for probabilistic graph construction
 
 **Design questions:**
-- HNSW vs IVF — graph vs partitioning, fundamental trade-offs?
-- recall@k — why is it THE metric?
-- Cache locality — why does memory layout matter for similarity search?
-- M parameter — build time vs query time trade-off?
+- HNSW vs IVF - graph vs partitioning, fundamental trade-offs?
+- recall@k - why is it THE metric?
+- Cache locality - why does memory layout matter for similarity search?
+- M parameter - build time vs query time trade-off?
 
 **References:**
-- 📄 [HNSW — Malkov & Yashunin, 2018](https://arxiv.org/abs/1603.09320) — The original paper
-- 📄 [Product Quantization — Jégou et al., 2011](https://lear.inrialpes.fr/pubs/2011/JDS11/jegou_searching_with_quantization.pdf)
-- 📝 [HNSW explained — Pinecone](https://www.pinecone.io/learn/series/faiss/hnsw/) — Best visual explainer
+- 📄 [HNSW - Malkov & Yashunin, 2018](https://arxiv.org/abs/1603.09320) - The original paper
+- 📄 [Product Quantization - Jégou et al., 2011](https://lear.inrialpes.fr/pubs/2011/JDS11/jegou_searching_with_quantization.pdf)
+- 📝 [HNSW explained - Pinecone](https://www.pinecone.io/learn/series/faiss/hnsw/) - Best visual explainer
 - 📝 [ann-benchmarks.com](http://ann-benchmarks.com/)
-- 📖 [Rust Book — Ch. 15: Smart Pointers](https://doc.rust-lang.org/book/ch15-00-smart-pointers.html)
+- 📖 [Rust Book - Ch. 15: Smart Pointers](https://doc.rust-lang.org/book/ch15-00-smart-pointers.html)
 - 📚 [criterion.rs](https://docs.rs/criterion/latest/criterion/)
-- 🔍 [instant-distance (Rust)](https://github.com/InstantDomain/instant-distance) — Read AFTER coding yours
+- 🔍 [instant-distance (Rust)](https://github.com/InstantDomain/instant-distance) - Read AFTER coding yours
 
 **Milestone ✅:**
 ```
@@ -234,7 +204,7 @@ $ rustretrieve bench --k 10
 
 ---
 
-### Stage 2.2 — Two-Tower Architecture (2–4 weeks)
+### Stage 2.2 - Two-Tower Architecture (2–4 weeks)
 
 > You don't train a neural net in Rust. You understand the architecture
 > and wire it into your engine.
@@ -247,28 +217,24 @@ $ rustretrieve bench --k 10
 - [ ] A/B comparison: random vs retrieval vs retrieval+reranking
 
 **Key papers to read:**
-- 📄 [YouTube DNN Recommendations — Covington et al., 2016](https://research.google/pubs/pub45530/) — Started it all
-- 📄 [DLRM — Naumov et al., 2019](https://arxiv.org/abs/1906.00091) — Facebook's approach
-- 📄 [Wide & Deep — Cheng et al., 2016](https://arxiv.org/abs/1606.07792) — Google's hybrid
+- 📄 [YouTube DNN Recommendations - Covington et al., 2016](https://research.google/pubs/pub45530/) - Started it all
+- 📄 [DLRM - Naumov et al., 2019](https://arxiv.org/abs/1906.00091) - Facebook's approach
+- 📄 [Wide & Deep - Cheng et al., 2016](https://arxiv.org/abs/1606.07792) - Google's hybrid
 
 **Explainers:**
-- 📝 [Two-Tower Models — Google](https://developers.google.com/machine-learning/recommendation/dnn/retrieval)
+- 📝 [Two-Tower Models - Google](https://developers.google.com/machine-learning/recommendation/dnn/retrieval)
 - 📝 [Embedding-based Retrieval at Facebook](https://arxiv.org/abs/2006.11632)
-- 📝 [Candidate Generation — Eugene Yan](https://eugeneyan.com/writing/real-time-recommendations/)
+- 📝 [Candidate Generation - Eugene Yan](https://eugeneyan.com/writing/real-time-recommendations/)
 
 ---
 
-# Phase 3 — Online / Streaming Systems
+# Phase 3 - Online / Streaming Systems
 
-**Duration:** 2–3 months · **Focus:** Your competitive advantage
-
-> Your DSP background is a superpower here. You already have intuitions about
-> latency budgets, real-time constraints, and event-driven systems.
-> Now formalize them and make them interviewable.
+**Duration:** 2–3 months · **Focus:** Real-time ML systems
 
 ---
 
-### Stage 3.1 — Streaming Updates (2–3 weeks)
+### Stage 3.1 - Streaming Updates (2–3 weeks)
 
 **Build:**
 - [ ] Event queue (producer/consumer)
@@ -283,15 +249,13 @@ $ rustretrieve bench --k 10
 - `Mutex` vs `RwLock` vs channels
 
 **References:**
-- 📖 [Rust Book — Ch. 16: Concurrency](https://doc.rust-lang.org/book/ch16-00-concurrency.html)
+- 📖 [Rust Book - Ch. 16: Concurrency](https://doc.rust-lang.org/book/ch16-00-concurrency.html)
 - 📚 [tokio tutorial](https://tokio.rs/tokio/tutorial)
 - 📚 [crossbeam](https://docs.rs/crossbeam/latest/crossbeam/)
 
 ---
 
-### Stage 3.2 — Contextual Bandit / Online Ranker (3–6 weeks)
-
-> This is where your RTB experience directly applies.
+### Stage 3.2 - Contextual Bandit / Online Ranker (3–6 weeks)
 
 **Build:**
 - [ ] Epsilon-greedy exploration
@@ -303,28 +267,28 @@ $ rustretrieve bench --k 10
 
 **Design questions:**
 - Why not always pick the highest-scoring item? (exploitation trap)
-- How does delayed feedback break naive online learning? (you've seen this at Adikteev)
-- Thompson Sampling vs UCB — when does each win?
+- How does delayed feedback break naive online learning?
+- Thompson Sampling vs UCB - when does each win?
 - How to detect drift? Sliding window comparison?
 
 **References:**
-- 📖 [Bandit Algorithms — Lattimore & Szepesvári](https://tor-lattimore.com/downloads/book/book.pdf) — Free textbook
-- 📄 [Delayed Feedback in Ads — Chapelle, 2014](https://arxiv.org/abs/1407.7073) — Directly your domain
-- 📝 [Contextual Bandits — Microsoft Research](https://www.microsoft.com/en-us/research/project/explore-exploit/)
+- 📖 [Bandit Algorithms - Lattimore & Szepesvári](https://tor-lattimore.com/downloads/book/book.pdf) - Free textbook
+- 📄 [Delayed Feedback in Ads - Chapelle, 2014](https://arxiv.org/abs/1407.7073)
+- 📝 [Contextual Bandits - Microsoft Research](https://www.microsoft.com/en-us/research/project/explore-exploit/)
 
 ---
 
-# Phase 4 — Staff-Level System Design
+# Phase 4 - Full Platform Integration
 
 **Duration:** 3+ months · **Focus:** Tie everything together
 
-> This phase is specifically about practicing the **Staff system design interview format**:
-> requirements → API → high-level → deep dive on 1-2 components → trade-offs → scaling.
-> You're building the system that IS the interview answer.
+> Combine all components into a cohesive ML platform.
+> Practice thinking about systems holistically:
+> requirements → API → architecture → deep dive → trade-offs → scaling.
 
 ---
 
-### Stage 4.1 — Mini Real-Time ML Platform
+### Stage 4.1 - Mini Real-Time ML Platform
 
 **Build:**
 - [ ] Feature store (Phase 1)
@@ -360,7 +324,7 @@ $ rustretrieve bench --k 10
      └──────────────────────┘
 ```
 
-**Staff-level design skills:**
+**Key design skills:**
 - Service decomposition and API boundaries
 - Data flow and consistency guarantees
 - Latency budgets across the pipeline
@@ -371,7 +335,7 @@ $ rustretrieve bench --k 10
 - 📝 [System Design Primer](https://github.com/donnemartin/system-design-primer)
 - 📝 [Netflix Tech Blog](https://netflixtechblog.com/)
 - 📝 [Uber Engineering Blog](https://www.uber.com/en-FR/blog/engineering/)
-- 📝 [Designing ML Systems — Chip Huyen](https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/)
+- 📝 [Designing ML Systems - Chip Huyen](https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/)
 
 ---
 
@@ -386,15 +350,19 @@ $ rustretrieve bench --k 10
 | [Programming Rust, 2nd Ed.](https://www.oreilly.com/library/view/programming-rust-2nd/9781492052586/) | Deep reference |
 | [The Rustonomicon](https://doc.rust-lang.org/nomicon/) | Unsafe, memory layouts |
 | [Rust Performance Book](https://nnethercote.github.io/perf-book/) | Optimization |
-| [Jon Gjengset — YouTube](https://www.youtube.com/@jonhoo) | Advanced live-coding |
+| [Jon Gjengset - YouTube](https://www.youtube.com/@jonhoo) | Advanced live-coding |
 
-### Interview Prep (targeted)
+### DS&A Practice
 | Resource | Why |
 |---|---|
-| [NeetCode 150](https://neetcode.io/) | Curated problems — solve after building each feature |
-| [AlgoMonster](https://algo.monster/) | Pattern-based, not grind-based |
-| [System Design Primer](https://github.com/donnemartin/system-design-primer) | Classic system design |
-| [ML Design Interviews](https://www.mldesigninterview.com/) | ML-specific system design |
+| [NeetCode 150](https://neetcode.io/) | Curated problems - solve after building each feature |
+| [AlgoMonster](https://algo.monster/) | Pattern-based learning |
+
+### ML Systems
+| Resource | Why |
+|---|---|
+| [System Design Primer](https://github.com/donnemartin/system-design-primer) | Classic system design patterns |
+| [Designing ML Systems - Chip Huyen](https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/) | End-to-end ML systems |
 
 ### Papers
 | Paper | Relevant to |
@@ -403,7 +371,7 @@ $ rustretrieve bench --k 10
 | [Wide & Deep (2016)](https://arxiv.org/abs/1606.07792) | Hybrid ranking |
 | [DLRM (2019)](https://arxiv.org/abs/1906.00091) | Embedding tables |
 | [HNSW (2018)](https://arxiv.org/abs/1603.09320) | ANN index |
-| [Delayed Feedback — Chapelle (2014)](https://arxiv.org/abs/1407.7073) | Online learning, your domain |
+| [Delayed Feedback - Chapelle (2014)](https://arxiv.org/abs/1407.7073) | Online learning |
 
 ---
 
@@ -464,11 +432,9 @@ rustretrieve/
 1. **Start SMALL.** 100 hardcoded items is fine for week 1.
 2. **The Rust compiler is your best teacher.** Listen to it.
 3. **Write tests early.** `#[cfg(test)] mod tests { ... }`
-4. **`cargo clippy`** often — teaches idiomatic Rust.
+4. **`cargo clippy`** often - teaches idiomatic Rust.
 5. **First correct, then fast.** Resist premature optimization.
 6. **Stuck > 30 min on borrow checker?** Draw ownership on paper.
-7. **After each feature:** find 2-3 related LeetCode problems. Notice how much easier they are.
-8. **For system design prep:** practice talking through your architecture out loud, as if in an interview. "I would start with requirements... the key trade-off here is..."
 
 ---
 
