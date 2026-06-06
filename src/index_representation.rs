@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+use std::fs::read_to_string;
 use crate::similarity::dot_product;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum EntyType {
     User = 0,
@@ -37,6 +39,29 @@ impl IndexRepresentation {
         Self {user_mapping, item_mapping}
     }
 
+    pub fn from_csv(users_path: &str, items_path: &str) -> Result<Self, String> {
+        let raw_user: String = read_to_string(users_path).map_err(|e| e.to_string())?;
+        let user = Self::to_hashmap(raw_user);
+
+        let raw_item: String = read_to_string(items_path).map_err(|e| e.to_string())?;
+        let item = Self::to_hashmap(raw_item);
+        return Ok(Self::new(user,item))
+    }   
+
+    fn to_hashmap(raw: String) -> HashMap<String, [f32; 128]>{
+        let mut map: HashMap<String, [f32; 128]> = HashMap::new();
+        for line in raw.lines().skip(1) {
+            let parts: Vec<&str> = line.split(',').collect();
+            let parsed: Result<Vec<f32>, _> = parts[1..].iter().map(|p| p.parse::<f32>()).collect();
+            if let Ok(vec) = parsed {
+                if let Ok(arr) = <[f32; 128]>::try_from(vec) {
+                    map.insert(parts[0].to_string(), arr);
+                }
+            }
+      }
+      map
+    }
+    
     pub fn get_user_embeddings(&self, user_id: String ) -> Result<[f32; 128], String>{
         match self.user_mapping.get(&user_id) {
             Some(embedding) => Ok(*embedding),
@@ -44,6 +69,7 @@ impl IndexRepresentation {
         }
     }
 
+    #[allow(dead_code)]
     pub fn insert(&mut self, id: String, embedding: [f32; 128], entity_type: EntyType) {
         if entity_type== EntyType::User{
             self.user_mapping.insert(id.clone(), embedding);
@@ -64,7 +90,6 @@ impl IndexRepresentation {
 
 
 #[cfg(test)]
-
 pub fn create_index() -> IndexRepresentation{
     let user_hashmap = HashMap::from([
         ("1".to_string(), [0.0_f32; 128]),
@@ -101,7 +126,6 @@ fn test_insert_new_embeddings(){
     let inserted = index.get_user_embeddings("8".to_string(),);
     assert_eq!(inserted.is_ok(), true)
 }
-
 #[test]
 fn test_empty_vector(){
     let empty_vec: Vec<f32> = vec![];
@@ -110,7 +134,6 @@ fn test_empty_vector(){
     assert_eq!(sim.is_ok(), false)
 }
 
-
 #[test]
 fn test_dimension_mismatch(){
     let vec_a = [0.0, 1.0, 0.0];
@@ -118,4 +141,10 @@ fn test_dimension_mismatch(){
     let sim = compute_similarity(&vec_a, &vec_b);
     assert_eq!(sim.is_ok(), false)
 }
-//Dimension mismatch → typed error
+
+#[test]
+fn test_csv_path_not_exist(){
+    let index = IndexRepresentation::from_csv("", "");
+    assert_eq!(index.is_ok(), false)
+}
+

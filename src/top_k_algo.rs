@@ -15,29 +15,29 @@ impl Ord for Score {
 }
 
 fn get_min_heap(k: usize, vec: Vec<(String, f32)> ) -> Vec<(String, f32)> {
-let mut heap: BinaryHeap<(Reverse<Score>, String)> = BinaryHeap::new();
-for (item, score) in vec {
-    if heap.len() < k { 
-        heap.push((Reverse(Score(score)), item))
-    }
-    else {
-        if heap.peek().unwrap().0.0.0 < score  {
-            heap.pop();
+    let mut heap: BinaryHeap<(Reverse<Score>, String)> = BinaryHeap::new();
+    for (item, score) in vec {
+        if heap.len() < k { 
             heap.push((Reverse(Score(score)), item))
         }
+        else {
+            if heap.peek().unwrap().0.0.0 < score  {
+                heap.pop();
+                heap.push((Reverse(Score(score)), item))
+            }
+        }
     }
-}
-let vec = heap.into_sorted_vec();
-return vec.into_iter().map(|(x, y)| (y, x.0.0)).collect()
+    let vec = heap.into_sorted_vec();
+    return vec.into_iter().map(|(x, y)| (y, x.0.0)).collect()
 }
 
 pub fn top_k_retrieval(k: usize, user_id: String, index: &IndexRepresentation) -> Result<Vec<(String, f32)>, String> {
-if k== 0 { return Err("K has to be greater than 0.".to_string())} 
-let items_emb = index.get_item_embeddings();
-let user_emb = index.get_user_embeddings(user_id)?;
+    if k== 0 { return Err("K has to be greater than 0.".to_string())} 
+    let items_emb = index.get_item_embeddings();
+    let user_emb = index.get_user_embeddings(user_id)?;
 
-let c: Vec<(String, f32)>  = items_emb.iter().filter_map(|(x, y)| (compute_similarity(&user_emb, y).ok().map(|score| (x.clone(), score)))).collect();
-return Ok(get_min_heap(k, c));
+    let c: Vec<(String, f32)>  = items_emb.iter().filter_map(|(x, y)| (compute_similarity(&user_emb, y).ok().map(|score| (x.clone(), score)))).collect();
+    return Ok(get_min_heap(k, c));
 } 
 
 #[cfg(test)]
