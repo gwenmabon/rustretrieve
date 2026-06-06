@@ -16,6 +16,8 @@ The system is designed around the same architectural patterns used in production
 
 ## Architecture
 
+> **Note:** This is the target architecture for the completed project. The codebase evolves incrementally, stage by stage. See the [Roadmap](Roadmap.md) for the current progress.
+
 ```
 rustretrieve/
 ├── src/
