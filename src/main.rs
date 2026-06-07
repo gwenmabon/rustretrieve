@@ -1,9 +1,6 @@
 use clap::Parser;
-mod index_representation;
-mod similarity; 
-mod top_k_algo;
-use crate::top_k_algo::top_k_retrieval;
-use crate::index_representation::IndexRepresentation;
+use rustretrieve::top_k_algo::top_k_retrieval;
+use rustretrieve::index_representation::IndexRepresentation;
 
 
 #[derive(Parser, Debug)]
