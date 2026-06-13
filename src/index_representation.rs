@@ -84,7 +84,6 @@ impl IndexRepresentation {
         &self.item_mapping 
     }
 
-
 }
 
 
