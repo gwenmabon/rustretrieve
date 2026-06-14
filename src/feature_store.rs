@@ -3,7 +3,7 @@ use std::time::SystemTime;
 use std::fmt;
 use crate::index_representation::EntyType;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum FeatureValue {
     Numeric(f32),
     Categorical(String),
@@ -20,6 +20,7 @@ impl fmt::Display for FeatureValue {
     }
 }
 
+#[derive(Clone, PartialEq)]
 pub struct FeatureStore {
     pub user_fs: HashMap<String, HashMap<String, FeatureValue>>,
     pub item_fs: HashMap<String, HashMap<String, FeatureValue>>,
@@ -48,15 +49,18 @@ impl FeatureStore {
         
     }
  
-    pub fn upsert(&mut self, entity_id: String, mapping: HashMap<String, FeatureValue>, entity_type: EntyType) {
+    pub fn upsert(&mut self,  batch: HashMap<String, HashMap<String, FeatureValue>>, entity_type: EntyType) {
         let map = match entity_type {
             EntyType::User => &mut self.user_fs,
             EntyType::Item => &mut self.item_fs,
         };
-        let inner = map.entry(entity_id).or_insert_with(HashMap::new);
-        for (k, v) in mapping {
-            inner.insert(k, v);
+        for (id, mapping) in batch{
+            let inner = map.entry(id).or_insert_with(HashMap::new);
+            for (k, v) in mapping {
+                inner.insert(k, v);
+            }
         }
+        
     } 
 }
 
@@ -110,7 +114,8 @@ fn test_get_features_for_existing_entity_no_feature(){
 #[test]
 fn test_upsert_new_features_on_existing_entity(){
     let mut fs = create_feature_store();
-    fs.upsert("user_1".to_string(), HashMap::from([("spend".to_string(), FeatureValue::Numeric(234.23))]), EntyType::User);
+    let b = HashMap::from([("user_1".to_string(), HashMap::from([("spend".to_string(), FeatureValue::Numeric(234.23))]))]);
+    fs.upsert(b, EntyType::User);
     let res = fs.get("user_1".to_string(), vec!["spend".to_string()], EntyType::User);
     assert_eq!(res.is_ok(), true)
 }
@@ -118,7 +123,77 @@ fn test_upsert_new_features_on_existing_entity(){
 #[test]
 fn test_upsert_features_on_new_entity(){
     let mut fs = create_feature_store();
-    fs.upsert("item_1".to_string(), HashMap::from([("price".to_string(), FeatureValue::Numeric(1.0))]), EntyType::Item);
+    let b = HashMap::from([("item_1".to_string(), HashMap::from([("price".to_string(), FeatureValue::Numeric(1.0))]))]);
+    fs.upsert(b, EntyType::Item);
     let res = fs.get("item_1".to_string(), vec!["price".to_string()], EntyType::Item);
     assert_eq!(res.is_ok(), true)
+}
+
+#[test]
+fn test_upsert_features_on_new_entities(){
+    let mut fs = create_feature_store();
+    let b = HashMap::from([("item_1".to_string(), HashMap::from([("price".to_string(), FeatureValue::Numeric(1.0))])),
+    ("item_2".to_string(), HashMap::from([("price".to_string(), FeatureValue::Numeric(10.0))]))]);
+    fs.upsert(b, EntyType::Item);
+    let res1 = fs.get("item_1".to_string(), vec!["price".to_string()], EntyType::Item);
+    assert_eq!(res1.is_ok(), true);
+    let res2 = fs.get("item_2".to_string(), vec!["price".to_string()], EntyType::Item);
+    assert_eq!(res2.is_ok(), true);
+}
+
+#[test]
+fn test_upsert_features_on_existing_entities(){
+    let mut fs = create_feature_store();
+    let b = HashMap::from([
+        ("item_101".to_string(), HashMap::from([
+            ("price".to_string(), FeatureValue::Numeric(19.99)),
+            ("category".to_string(), FeatureValue::Categorical("electronics".to_string())),
+            ("last_update".to_string(), FeatureValue::Timestamp(SystemTime::now())),
+        ])),
+        ("item_102".to_string(), HashMap::from([
+            ("price".to_string(), FeatureValue::Numeric(99.99)),
+            ("category".to_string(), FeatureValue::Categorical("books".to_string())),
+            ("last_update".to_string(), FeatureValue::Timestamp(SystemTime::now())),
+        ])),
+    ]);
+    fs.upsert(b, EntyType::Item);
+    let res1 = fs.get("item_101".to_string(), vec!["price".to_string(), "category".to_string(), "last_update".to_string(),], EntyType::Item).unwrap();
+    let is_value = *res1.get("price").unwrap() == FeatureValue::Numeric(19.99) ;
+    assert_eq!(is_value, true);
+    let res2 = fs.get("item_102".to_string(), vec!["price".to_string(), "category".to_string(), "last_update".to_string(),], EntyType::Item).unwrap();
+    let is_value2 = *res2.get("price").unwrap() == FeatureValue::Numeric(99.99) ;
+    assert_eq!(is_value2, true);
+}
+
+#[test]
+fn test_upsert_features_on_mixing_entities(){
+    let mut fs = create_feature_store();
+    let b = HashMap::from([
+        ("item_101".to_string(), HashMap::from([
+            ("price".to_string(), FeatureValue::Numeric(19.99)),
+            ("category".to_string(), FeatureValue::Categorical("electronics".to_string())),
+            ("last_update".to_string(), FeatureValue::Timestamp(SystemTime::now())),
+        ])),
+        ("item_2".to_string(), HashMap::from([
+            ("price".to_string(), FeatureValue::Numeric(99.99)),
+            ("category".to_string(), FeatureValue::Categorical("books".to_string())),
+            ("last_update".to_string(), FeatureValue::Timestamp(SystemTime::now())),
+        ])),
+    ]);
+    fs.upsert(b, EntyType::Item);
+    let res1 = fs.get("item_101".to_string(), vec!["price".to_string(), "category".to_string(), "last_update".to_string(),], EntyType::Item).unwrap();
+    let is_value = *res1.get("price").unwrap() == FeatureValue::Numeric(19.99) ;
+    assert_eq!(is_value, true);
+    let res2 = fs.get("item_2".to_string(), vec!["price".to_string(), "category".to_string(), "last_update".to_string(),], EntyType::Item).unwrap();
+    let is_value2 = *res2.get("price").unwrap() == FeatureValue::Numeric(99.99) ;
+    assert_eq!(is_value2, true);
+}
+
+#[test]
+fn test_upsert_empty_batch(){
+    let mut fs = create_feature_store();
+    let copy = fs.clone();
+    let b = HashMap::new();
+    fs.upsert(b, EntyType::User);
+    assert_eq!(copy==fs, true);
 }
