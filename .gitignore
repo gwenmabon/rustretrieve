@@ -2,3 +2,4 @@
 .agents/
 .cursor/
 .DS_Store
+.claude/

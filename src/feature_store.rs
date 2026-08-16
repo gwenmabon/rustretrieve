@@ -1,21 +1,54 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::time::SystemTime;
 use std::fmt;
 use crate::index_representation::EntyType;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum FeatureValue {
     Numeric(f32),
     Categorical(String),
     Timestamp(SystemTime),
+    Boolean(bool),
+    SlidingWindow(SlidingWindow)
 }
 
+#[derive(Clone, PartialEq, Debug)]
+pub struct SlidingWindow {
+    pub capacity: usize, 
+    pub values: VecDeque<FeatureValue>
+}
 impl fmt::Display for FeatureValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             FeatureValue::Numeric(val) => write!(f, "{}", val),
             FeatureValue::Categorical(val) => write!(f, "{}", val),
             FeatureValue::Timestamp(val) => write!(f, "{:?}", val), //SystemTime doesn't implement Display, only Debug
+            FeatureValue::Boolean(val) => write!(f, "{:}", val),
+            FeatureValue::SlidingWindow(sw) => write!(f, "capacity: {}, values: {:?}", sw.capacity, sw.get()),
+        }
+    }
+}
+
+
+impl SlidingWindow {
+    pub fn new(capacity: usize) -> Self {
+        Self {capacity, values: VecDeque::new()}
+    }
+
+    pub fn get(&self) -> Vec<&FeatureValue>{
+        self.values.iter().collect::<Vec<&FeatureValue>>()
+    }
+}
+impl FeatureValue {
+    fn push_scalar(&mut self, incoming: FeatureValue) -> Result<(), String> {
+        match self {
+            FeatureValue::SlidingWindow(sw)  => {
+                if sw.capacity==sw.values.len() { sw.values.pop_front(); }
+                sw.values.push_back(incoming);
+                Ok(())
+                },
+                
+            _ => Err("not a window".into()),
         }
     }
 }
@@ -57,10 +90,16 @@ impl FeatureStore {
         for (id, mapping) in batch{
             let inner = map.entry(id).or_insert_with(HashMap::new);
             for (k, v) in mapping {
-                inner.insert(k, v);
+                if let Some(existing) = inner.get_mut(&k) {
+                    let _ = match existing {
+                        FeatureValue::SlidingWindow(_) => existing.push_scalar(v),
+                        _ => Ok(*existing = v )
+                    };
+                } else {
+                    inner.insert(k, v);
+                }
             }
         }
-        
     } 
 }
 
